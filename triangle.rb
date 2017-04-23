@@ -14,7 +14,11 @@
 #   about_triangle_project_2.rb
 #
 def triangle(a, b, c)
-  # WRITE THIS CODE
+  raise TriangleError, 'A triangle can not have negative or zero value.' if [a, b, c].select{|i| i <= 0 }.any?
+  raise TriangleError, 'Any two sides of a triangle should add up to more than the third side.' unless a + b > c && a + c > b && b + c > a
+  return :equilateral if a == b && b == c
+  return :scalene if (a < b && b < c) || (a > b && b > c)
+  :isosceles
 end
 
 # Error class used in part 2.  No need to change this code.

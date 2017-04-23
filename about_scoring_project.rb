@@ -30,7 +30,32 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # Your goal is to write the score method.
 
 def score(dice)
-  # You need to write this method
+  res = 0
+  bonus = 3
+
+  agregator = Proc.new do |counter, num = nil|
+    if counter[:num] != num
+      counter[:value] += (counter[:count] / bonus) * 100 * counter[:num]
+      counter[:count] = 0
+      counter[:num] = num
+    end
+    counter[:count] += 1
+    counter
+  end
+
+  ones = dice.select{|i| i == 1}
+  fives = dice.select{|i| i == 5}
+  other = dice.select{|i| i != 1 && i != 5}
+  
+  res += (ones.count % bonus) * 100
+  res += (ones.count / bonus) * 1000
+  res += (fives.count % bonus) * 50
+  res += (fives.count / bonus) * 500
+
+  return res if other.count == other.uniq.count
+
+  other_points = agregator.call other.sort.inject({num: 0, count: 0, value: 0}, &agregator)
+  res + other_points[:value]
 end
 
 class AboutScoringProject < Neo::Koan
